@@ -19,18 +19,15 @@ app.use(express.static("public"));
 
 
 mongoose.connect("mongodb://127.0.0.1:27017/userDB", {useNewUrlParser: true});
-//since you are using encrypt chenge it the the schema below
 const userSchema = new mongoose.Schema({
   email:String,
   password:String
 });
-//define your secret
 
 
-//ready to use that secret to rncrypt our database by taking the schema you defined earlier and add mongoose encrypt as a pluggin to our schema and then pass over secret as js object
-userSchema.plugin(encrypt, { secret: process.env.SECRET, encryptedFields: ['password'] }); //this will encrypt our entire database. its best we only encrytpt the password field and ignore the email,
-//to do that you will change the option to only encrypt certain fields //make sure you add this pluggin before you create your mongoose model
 
+
+userSchema.plugin(encrypt, { secret: process.env.SECRET, encryptedFields: ['password'] }); 
 
 
 const User = mongoose.model("User", userSchema);
@@ -67,16 +64,15 @@ app.post("/register", function(req, res){
 });
 
 
-//login route
 app.post("/login", function(req, res){
   const username = req.body.username
   const password = req.body.password
 
-//check to see it matches with the details entered in the register form
+
 User.findOne({email:username})
 .then((foundUser) =>{
   if(foundUser){
-    if(foundUser.password === password){//if the user password matches with the password ontered durin registration
+    if(foundUser.password === password){
       res.render("secrets")
       console.log("logged in siccessfully");
     }
